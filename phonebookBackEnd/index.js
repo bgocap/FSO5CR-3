@@ -26,7 +26,13 @@ let persons=
       "number": "39-23-6423122"
     }
 ]
-  
+
+app.get('/info', (request, response) => {
+    const date= new Date
+    const message=`Phone book has info for ${persons.reduce((i)=>i+=1,0)} people<br/><br/>${date}`
+    response.send(message)
+  })
+
   app.get('/api/persons', (request, response) => {
     response.json(persons)
   })
