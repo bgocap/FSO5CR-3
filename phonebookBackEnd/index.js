@@ -27,36 +27,66 @@ let persons=
     }
 ]
 
+const getRandomNumber = () => Math.floor(Math.random() * 1000)
+
+const generateId =()=>{
+    let newId=getRandomNumber()
+    console.log('new random number is: ',newId)
+    while(persons.some(prsn=>prsn.id===newId)){
+        newId=getRandomNumber()
+    }
+    return newId
+}
+
+app.post('/api/persons', (request,response)=>{
+
+    const body = request.body
+    if (!body.name || !body.number) {
+        return response.status(400).json({ 
+          error: 'data missing' 
+        })
+      }
+
+      const person = {
+        id: generateId(),
+        name: body.name,
+        number: body.number
+      }
+    
+      persons = persons.concat(person)
+      response.json(person)
+})
+
 app.get('/info', (request, response) => {
     const date= new Date
-    const message=`Phone book has info for ${persons.reduce((i)=>i+=1,0)} people<br/><br/>${date}`
+    const message=`Phone book has info for ${persons.length} people<br/><br/>${date}`
     response.send(message)
-  })
+})
 
-  app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response) => {
     response.json(persons)
-  })
+})
 
-  app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     const person = persons.find(prsn => prsn.id === id)
     console.log(id)
     if (person) {
-      response.json(person)
+        response.json(person)
     } else {
-      response.status(404).end()
+        response.status(404).end()
     }
-    
+
     console.log(person)
     response.json(person)
-  })
+})
 
-  app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     persons = persons.filter(prsn => prsn.id !== id)
-  
+
     response.status(204).end()
-  })
+})
 
 const PORT = 3001
 app.listen(PORT)
