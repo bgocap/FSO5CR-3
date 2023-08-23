@@ -1,6 +1,11 @@
 const express = require('express')
+var morgan = require('morgan')
+
+const morgan1 = morgan(':method :url :status :res[content-length] - :response-time ms')
+
 const app = express()
 
+app.use(morgan1)
 app.use(express.json())
 
 let persons=
@@ -31,7 +36,7 @@ const getRandomNumber = () => Math.floor(Math.random() * 1000)
 
 const generateId =()=>{
     let newId=getRandomNumber()
-    console.log('new random number is: ',newId)
+    //console.log('new random number is: ',newId)
     while(persons.some(prsn=>prsn.id===newId)){
         newId=getRandomNumber()
     }
@@ -83,7 +88,7 @@ app.get('/api/persons/:id', (request, response) => {
       response.status(404).end()
   }
 
-  console.log(person)
+  //console.log(person)
   response.json(person)
 })
 
