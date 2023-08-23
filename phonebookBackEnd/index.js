@@ -40,45 +40,51 @@ const generateId =()=>{
 
 app.post('/api/persons', (request,response)=>{
 
-    const body = request.body
-    if (!body.name || !body.number) {
-        return response.status(400).json({ 
-          error: 'data missing' 
-        })
-      }
+  const body = request.body
+  if (!body.name || !body.number) {
+      return response.status(400).json({
+        error: 'data missing'
+      })
+  }
 
-      const person = {
-        id: generateId(),
-        name: body.name,
-        number: body.number
-      }
-    
-      persons = persons.concat(person)
-      response.json(person)
+  if (persons.some(prsn=>prsn.name===body.name)){
+    return response.status(400).json({
+      error: 'The name already exists in the phonebook'
+    })
+  }
+
+  const person = {
+    id: generateId(),
+    name: body.name,
+    number: body.number
+  }
+  
+  persons = persons.concat(person)
+  response.json(person)
 })
 
 app.get('/info', (request, response) => {
-    const date= new Date
-    const message=`Phone book has info for ${persons.length} people<br/><br/>${date}`
-    response.send(message)
+  const date= new Date
+  const message=`Phone book has info for ${persons.length} people<br/><br/>${date}`
+  response.send(message)
 })
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+  response.json(persons)
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(prsn => prsn.id === id)
-    console.log(id)
-    if (person) {
-        response.json(person)
-    } else {
-        response.status(404).end()
-    }
+  const id = Number(request.params.id)
+  const person = persons.find(prsn => prsn.id === id)
+  console.log(id)
+  if (person) {
+      response.json(person)
+  } else {
+      response.status(404).end()
+  }
 
-    console.log(person)
-    response.json(person)
+  console.log(person)
+  response.json(person)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
