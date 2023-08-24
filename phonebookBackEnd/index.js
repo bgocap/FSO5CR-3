@@ -1,12 +1,15 @@
 const express = require('express')
 var morgan = require('morgan')
 
-const morgan1 = morgan(':method :url :status :res[content-length] - :response-time ms')
+
+morgan.token('body', function(req,res){return JSON.stringify(req.body)})
+const log = morgan(':method :url :status :res[content-length] - :response-time ms :body')
 
 const app = express()
 
-app.use(morgan1)
 app.use(express.json())
+
+app.use(log)
 
 let persons=
 [
@@ -98,6 +101,8 @@ app.delete('/api/persons/:id', (request, response) => {
 
     response.status(204).end()
 })
+
+
 
 const PORT = 3001
 app.listen(PORT)

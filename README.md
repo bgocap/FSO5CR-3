@@ -1,7 +1,7 @@
 <h1>Full Stack Web Development Open - Part 3</h1>
 
 Programming a server with NodeJS and Express.</br>
-Exercises are commits. Done **7** out of *22*
+Exercises are commits. Done **8** out of *22*
 
 ```
 📦phonebookBackEnd
