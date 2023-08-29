@@ -1,5 +1,6 @@
 const express = require('express')
 var morgan = require('morgan')
+const cors = require('cors')
 
 
 morgan.token('body', function(req,res){return JSON.stringify(req.body)})
@@ -8,8 +9,8 @@ const log = morgan(':method :url :status :res[content-length] - :response-time m
 const app = express()
 
 app.use(express.json())
-
 app.use(log)
+app.use(cors())
 
 let persons=
 [
