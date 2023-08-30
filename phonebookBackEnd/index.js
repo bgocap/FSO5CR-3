@@ -9,8 +9,8 @@ const log = morgan(':method :url :status :res[content-length] - :response-time m
 const app = express()
 
 app.use(express.json())
-app.use(log)
 app.use(cors())
+app.use(log)
 
 let persons=
 [
@@ -85,7 +85,7 @@ app.get('/api/persons', (request, response) => {
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   const person = persons.find(prsn => prsn.id === id)
-  console.log(id)
+  //console.log(id)
   if (person) {
       response.json(person)
   } else {
@@ -93,7 +93,7 @@ app.get('/api/persons/:id', (request, response) => {
   }
 
   //console.log(person)
-  response.json(person)
+  //response.json(person)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -102,7 +102,6 @@ app.delete('/api/persons/:id', (request, response) => {
 
     response.status(204).end()
 })
-
 
 
 const PORT = 3001
