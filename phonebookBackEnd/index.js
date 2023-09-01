@@ -1,7 +1,8 @@
+require('dotenv').config()
 const express = require('express')
 var morgan = require('morgan')
 const cors = require('cors')
-
+const Person = require('./models/Person')
 
 morgan.token('body', function(req,res){return JSON.stringify(req.body)})
 const log = morgan(':method :url :status :res[content-length] - :response-time ms :body')
@@ -12,7 +13,7 @@ app.use(express.static('build'))
 app.use(express.json())
 app.use(cors())
 app.use(log)
-
+/*
 let persons=
 [
     { 
@@ -36,6 +37,7 @@ let persons=
       "number": "39-23-6423122"
     }
 ]
+*/
 
 const getRandomNumber = () => Math.floor(Math.random() * 1000)
 
@@ -51,6 +53,14 @@ const generateId =()=>{
 app.post('/api/persons', (request,response)=>{
 
   const body = request.body
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  })
+  person.save().then(result => {
+    console.log(`added ${newPersonName} number ${newPersonNumber} to phonebook`)
+})
+  /*
   if (!body.name || !body.number) {
       return response.status(400).json({
         error: 'data missing'
@@ -71,6 +81,7 @@ app.post('/api/persons', (request,response)=>{
   
   persons = persons.concat(person)
   response.json(person)
+  */
 })
 
 app.get('/info', (request, response) => {
@@ -80,7 +91,9 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(psrns => {
+    response.json(psrns)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -105,6 +118,6 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
