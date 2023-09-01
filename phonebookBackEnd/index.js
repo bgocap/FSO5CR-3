@@ -52,50 +52,48 @@ const generateId =()=>{
 
 app.post('/api/persons', (request,response)=>{
 
-  const body = request.body
-  const person = new Person({
-    name: body.name,
-    number: body.number,
-  })
-  person.save().then(result => {
-    console.log(`added ${newPersonName} number ${newPersonNumber} to phonebook`)
-})
-  /*
+  const body = request.body  
   if (!body.name || !body.number) {
-      return response.status(400).json({
-        error: 'data missing'
-      })
+    return response.status(400).json({
+      error: 'data missing'
+    })
   }
-
+  /*
   if (persons.some(prsn=>prsn.name===body.name)){
     return response.status(400).json({
       error: 'The name already exists in the phonebook'
     })
   }
-
   const person = {
     id: generateId(),
     name: body.name,
     number: body.number
   }
-  
   persons = persons.concat(person)
   response.json(person)
   */
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  })
+  person.save().then(result => {
+    console.log(`added ${body.name} number ${body.number} to phonebook`)
+    response.json(person)
+  })
 })
-
+//GET PAGE STATUS
 app.get('/info', (request, response) => {
   const date= new Date
   const message=`Phone book has info for ${persons.length} people<br/><br/>${date}`
   response.send(message)
 })
-
+//GET ALL PEOPLE
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(psrns => {
     response.json(psrns)
   })
 })
-
+//GET BY ID
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   const person = persons.find(prsn => prsn.id === id)
@@ -109,7 +107,7 @@ app.get('/api/persons/:id', (request, response) => {
   //console.log(person)
   //response.json(person)
 })
-
+//DELETE PERSON BY ID
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     persons = persons.filter(prsn => prsn.id !== id)
@@ -118,6 +116,6 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
