@@ -14,36 +14,10 @@ app.use(express.json())
 app.use(cors())
 app.use(log)
 
-//ADD NEW PERSON
-app.post('/api/persons', (request,response,next)=>{
-
-  const body = request.body  
-  if (!body.name || !body.number) {
-    return response.status(400).json({
-      error: 'data missing'
-    })
-  }
-  /*
-  if (persons.some(prsn=>prsn.name===body.name)){
-    return response.status(400).json({
-      error: 'The name already exists in the phonebook'
-    })
-  }
-  const person = {
-    id: generateId(),
-    name: body.name,
-    number: body.number
-  }
-  persons = persons.concat(person)
-  response.json(person)
-  */
-  const person = new Person({
-    name: body.name,
-    number: body.number,
-  })
-  person.save().then(result => {
-    console.log(`added ${body.name} number ${body.number} to phonebook`)
-    response.json(person)
+//GET ALL PEOPLE
+app.get('/api/persons', (request, response,next) => {
+  Person.find({}).then(psrns => {
+    response.json(psrns)
   }).catch(error => next(error))
 })
 
@@ -55,29 +29,42 @@ app.get('/info', (request, response) => {
   response.send(message)
 })*/
 
-//GET ALL PEOPLE
-app.get('/api/persons', (request, response) => {
-  Person.find({}).then(psrns => {
-    response.json(psrns)
+//ADD NEW PERSON
+app.post('/api/persons', (request,response,next)=>{
+  const body = request.body
+
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: 'data missing'
+    })
+  }
+
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  })
+
+  person.save().then(result => {
+    console.log(`added ${body.name} number ${body.number} to phonebook`)
+    response.json(person)
   }).catch(error => next(error))
 })
 
-/*
-//GET BY ID
-app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(prsn => prsn.id === id)
-  //console.log(id)
-  if (person) {
-      response.json(person)
-  } else {
-      response.status(404).end()
+//EDIT PERSON BY ID
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  const person = {
+    name: body.name,
+    number: body.number,
   }
 
-  //console.log(person)
-  //response.json(person)
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPrsn => {
+      response.json(updatedPrsn)
+    })
+    .catch(error => next(error))
 })
-*/
 
 //DELETE PERSON BY ID
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -89,6 +76,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
+//MIDDLEWARE ERROR HANDLER
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
