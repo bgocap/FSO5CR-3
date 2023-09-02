@@ -21,6 +21,15 @@ app.get('/api/persons', (request, response,next) => {
   }).catch(error => next(error))
 })
 
+//GET PERSON BY ID
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+  .then(prsn => {
+      if (prsn) {response.json(prsn)} else {response.status(404).end()}
+  })
+  .catch(error => next(error))
+})
+
 /*
 //GET PAGE STATUS
 app.get('/info', (request, response) => {
@@ -79,11 +88,9 @@ app.delete('/api/persons/:id', (request, response, next) => {
 //MIDDLEWARE ERROR HANDLER
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
-
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   }
-
   next(error)
 }
 app.use(errorHandler)
