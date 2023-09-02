@@ -15,7 +15,7 @@ app.use(cors())
 app.use(log)
 
 //ADD NEW PERSON
-app.post('/api/persons', (request,response)=>{
+app.post('/api/persons', (request,response,next)=>{
 
   const body = request.body  
   if (!body.name || !body.number) {
@@ -44,22 +44,25 @@ app.post('/api/persons', (request,response)=>{
   person.save().then(result => {
     console.log(`added ${body.name} number ${body.number} to phonebook`)
     response.json(person)
-  })
-  .catch(error => next(error))
+  }).catch(error => next(error))
 })
+
 /*
 //GET PAGE STATUS
 app.get('/info', (request, response) => {
   const date= new Date
   const message=`Phone book has info for ${persons.length} people<br/><br/>${date}`
   response.send(message)
-})
+})*/
+
 //GET ALL PEOPLE
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(psrns => {
     response.json(psrns)
-  })
+  }).catch(error => next(error))
 })
+
+/*
 //GET BY ID
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
