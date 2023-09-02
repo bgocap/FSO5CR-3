@@ -49,7 +49,7 @@ const generateId =()=>{
     }
     return newId
 }
-
+//ADD NEW PERSON
 app.post('/api/persons', (request,response)=>{
 
   const body = request.body  
@@ -108,11 +108,13 @@ app.get('/api/persons/:id', (request, response) => {
   //response.json(person)
 })
 //DELETE PERSON BY ID
-app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(prsn => prsn.id !== id)
-
-    response.status(204).end()
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      //console.log('Person deleted')
+      response.status(204).end()
+    })
+    .catch(error => console.log(error))
 })
 
 
