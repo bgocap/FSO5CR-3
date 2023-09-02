@@ -13,42 +13,7 @@ app.use(express.static('build'))
 app.use(express.json())
 app.use(cors())
 app.use(log)
-/*
-let persons=
-[
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
-*/
 
-const getRandomNumber = () => Math.floor(Math.random() * 1000)
-
-const generateId =()=>{
-    let newId=getRandomNumber()
-    //console.log('new random number is: ',newId)
-    while(persons.some(prsn=>prsn.id===newId)){
-        newId=getRandomNumber()
-    }
-    return newId
-}
 //ADD NEW PERSON
 app.post('/api/persons', (request,response)=>{
 
@@ -80,7 +45,9 @@ app.post('/api/persons', (request,response)=>{
     console.log(`added ${body.name} number ${body.number} to phonebook`)
     response.json(person)
   })
+  .catch(error => next(error))
 })
+/*
 //GET PAGE STATUS
 app.get('/info', (request, response) => {
   const date= new Date
@@ -107,6 +74,8 @@ app.get('/api/persons/:id', (request, response) => {
   //console.log(person)
   //response.json(person)
 })
+*/
+
 //DELETE PERSON BY ID
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
@@ -114,9 +83,19 @@ app.delete('/api/persons/:id', (request, response, next) => {
       //console.log('Person deleted')
       response.status(204).end()
     })
-    .catch(error => console.log(error))
+    .catch(error => next(error))
 })
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT)
