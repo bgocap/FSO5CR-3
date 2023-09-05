@@ -27,8 +27,8 @@ if(process.argv[3]||process.argv[4]){
     number: newPersonNumber,
   })
   person.save().then(result => {
-      console.log(`added ${newPersonName} number ${newPersonNumber} to phonebook`)
-      mongoose.connection.close()
+    console.log(`added ${newPersonName} number ${newPersonNumber} to phonebook`)
+    mongoose.connection.close()
   })
 }else{
   Person.find({}).then(result => {

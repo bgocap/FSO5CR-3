@@ -24,10 +24,10 @@ app.get('/api/persons', (request, response,next) => {
 //GET PERSON BY ID
 app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
-  .then(prsn => {
+    .then(prsn => {
       if (prsn) {response.json(prsn)} else {response.status(404).end()}
-  })
-  .catch(error => next(error))
+    })
+    .catch(error => next(error))
 })
 
 /*
@@ -39,9 +39,8 @@ app.get('/info', (request, response) => {
 })*/
 
 //ADD NEW PERSON
-app.post('/api/persons', (request,response,next)=>{
+app.post('/api/persons', (request,response,next) => {
   const body = request.body
-  
   if (!body.name || !body.number) {
     return response.status(400).json({
       error: 'data missing'
@@ -52,7 +51,6 @@ app.post('/api/persons', (request,response,next)=>{
     name: body.name,
     number: body.number,
   })
-  
   person.save().then(result => {
     console.log(`added ${body.name} number ${body.number} to phonebook`)
     response.json(person)
